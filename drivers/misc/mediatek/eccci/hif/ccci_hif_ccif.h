@@ -237,6 +237,7 @@ static inline int ccci_ccif_hif_set_wakeup_src(unsigned char hif_id, int value)
 		return atomic_set(&md_ctrl->wakeup_src, value);
 	else
 		return -1;
+
 }
 
 void *ccif_hif_fill_rt_header(unsigned char hif_id, int packet_size,
