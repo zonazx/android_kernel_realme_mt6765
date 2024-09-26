@@ -132,7 +132,7 @@ extern int ap_temp_debug;
 #define charger_xlog_printk(num, fmt, ...) \
         do { \
                 if (enable_charger_log >= (int)num) { \
-                        printk(KERN_NOTICE pr_fmt("[OPPO_CHG][%s]"fmt), __func__, ##__VA_ARGS__); \
+                        pr_debug(KERN_NOTICE pr_fmt("[OPPO_CHG][%s]"fmt), __func__, ##__VA_ARGS__); \
                 } \
         } while (0)
 
@@ -600,7 +600,7 @@ int oppo_battery_set_property(struct power_supply *psy,
 #endif
 
         default:
-                pr_err("set prop %d is not supported in batt\n", psp);
+                //pr_err("set prop %d is not supported in batt\n", psp);
                 ret = -EINVAL;
                 break;
         }
@@ -840,7 +840,7 @@ int oppo_battery_get_property(struct power_supply *psy,
 			break;
 #endif
         default:
-                pr_err("get prop %d is not supported in batt\n", psp);
+                //pr_err("get prop %d is not supported in batt\n", psp);
                 ret = -EINVAL;
                 break;
         }
