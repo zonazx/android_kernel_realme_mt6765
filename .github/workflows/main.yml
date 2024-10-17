@@ -1,0 +1,45 @@
+name: Build Kernel
+
+on:
+  push:
+    paths:
+      - ".github/workflows/main.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+   shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup package
+        run: |
+          sudo apt-get update -y && sudo apt-get install dialog bash sed wget git curl zip tar jq expect make cmake automake autoconf llvm lld lldb clang gcc binutils bison perl gperf gawk flex bc python3 zstd openssl unzip cpio bc bison build-essential ccache liblz4-tool libsdl1.2-dev libstdc++6 libxml2 libxml2-utils lzop pngcrush schedtool squashfs-tools xsltproc zlib1g-dev libncurses5-dev bzip2 git gcc g++ libssl-dev gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-arm-linux-gnueabi dos2unix kmod python2 rlwrap -y
+  
+      - name: Clone Crosstool
+        run: |
+          git clone --depth=1 -b karashi https://github.com/techyminati/AnyKernel3 anykernel
+          mkdir -p $HOME/toolchain/arm
+          mkdir -p $HOME/toolchain/aarch64
+          wget https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz  
+          wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
+          tar -xf "gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz" -C $HOME/toolchain/arm
+          tar -xf "gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz" -C $HOME/toolchain/aarch64
+
+      - name: KernelSU + Clean
+        run: |
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
+
+      - name: Clean
+        run: |
+          chmod 777 ./build
+          make clean; make mrproper
+
+      - name: Build
+        run: |
+          ./build
