@@ -1833,6 +1833,8 @@ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
  */
 static int current_may_throttle(void)
 {
+	if ((current->signal->oom_score_adj < 0))
+		return 0;
 	return !(current->flags & PF_LESS_THROTTLE) ||
 		current->backing_dev_info == NULL ||
 		bdi_write_congested(current->backing_dev_info);
@@ -2380,6 +2382,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
 	 * latencies, so it's better to scan a minimum amount there as
 	 * well.
 	 */
+	
+	prepare_workingset_protection(pgdat, sc);
+		
+	unsigned long totalswap = total_swap_pages;
+	
 	if (current_is_kswapd()) {
 		if (!pgdat_reclaimable(pgdat))
 			force_scan = true;
@@ -2392,8 +2399,6 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
 #endif		
 	if (!global_reclaim(sc))
 		force_scan = true;
-
-	prepare_workingset_protection(pgdat, sc);
 
 	/* If we have no swap space, do not bother scanning anon pages. */
 #ifndef VENDOR_EDIT //yixue.ge@psw.bsp.kernel.driver 20170810 modify for reserver some zram disk size
