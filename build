@@ -13,6 +13,11 @@ export ZIPI="LIFE-${TIMESTAMP}"
 export KBUILD_BUILD_USER="syc"
 export KBUILD_BUILD_HOST="more"
 
+# Toolchain
+PATH="$HOME/CLANG/bin:PATH"
+GCC_64_DIR="$HOME/GCC64"
+GCC_32_DIR="$HOME/GCC32"
+
 # Prebuilt Clang Toolchain (AOSP)
 CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz"
 
@@ -22,14 +27,9 @@ GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm
 GCC_BRANCH="master-kernel-build-2021"
 
 # Cloning all the Necessary files
-if [ ! -d clang ]; then mkdir -p $HOME/clang && curl -Lsq "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/clang; fi
-[ ! -d x64 ] && git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" ./x64
-[ ! -d x32 ] && git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" ./x32
-
-# Toolchain
-PATH="$HOME/clang/bin:PATH"
-GCC_64_DIR="$HOME/GCC64/bin"
-GCC_32_DIR="$HOME/GCC32/bin"
+if [ ! -d CLANG ]; then mkdir -p $HOME/CLANG && wget "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG; fi
+[ ! -d GCC64 ] && git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" $GCC64
+[ ! -d GCC32 ] && git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" $GCC32
 
 # Function to send messages to Telegram
 send_msg_telegram() {
@@ -77,9 +77,9 @@ send_msg_telegram() {
 compile_kernel() {
     make O=out ARCH=arm64 RMX2185_defconfig
     START=$(date +"%s")
-    make CC=$HOME/clang/bin/clang -j4 ARCH=arm64 SUBARCH=arm64 O=out \
-        CROSS_COMPILE=$GCC_64_DIR/aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=$GCC_32_DIR/arm-linux-androideabi- \
+    make CC=$HOME/CLANG/bin/clang -j4 ARCH=arm64 SUBARCH=arm64 O=out \
+        CROSS_COMPILE=$GCC_64_DIR/aarch64-linux-androidkernel- \
+        CROSS_COMPILE_ARM32=$GCC_32_DIR/arm-linux-androidkernel- \
         INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
     END=$(date +"%s")
     DIFF=$((END - START))
