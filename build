@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -x
+
 # Environment Variables
 export ARCH=arm64
 export TZ=Asia/Jakarta
@@ -8,11 +10,26 @@ export CHAT_ID="-1002122810217"
 export TOKEN="7087092882:AAGaHhJgtgDc-RUrgYPJTvaMpaMbyCyvf94"
 export TIMESTAMP=$(date +"%m%d")-$(date +"%H%M")
 export ZIPI="LIFE-${TIMESTAMP}"
-export LOCALVERSION="-Larch-e/13"
 export KBUILD_BUILD_USER="syc"
 export KBUILD_BUILD_HOST="more"
-GCC_64_DIR="$HOME/toolchain/aarch64/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu"
-GCC_32_DIR="$HOME/toolchain/arm/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf"
+
+# Prebuilt Clang Toolchain (AOSP)
+CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz"
+
+# Prebuilt GCC Utilities (AOSP)
+GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
+GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
+GCC_BRANCH="master-kernel-build-2021"
+
+# Cloning all the Necessary files
+if [ ! -d clang ]; then mkdir -p $HOME/clang && curl -Lsq "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/clang; fi
+[ ! -d x64 ] && git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" ./x64
+[ ! -d x32 ] && git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" ./x32
+
+# Toolchain
+PATH="$HOME/clang/bin:PATH"
+GCC_64_DIR="$HOME/GCC64/bin"
+GCC_32_DIR="$HOME/GCC32/bin"
 
 # Function to send messages to Telegram
 send_msg_telegram() {
@@ -60,9 +77,9 @@ send_msg_telegram() {
 compile_kernel() {
     make O=out ARCH=arm64 RMX2185_defconfig
     START=$(date +"%s")
-    make -j4 ARCH=arm64 SUBARCH=arm64 O=out \
-        CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-gnu- \
-        CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-gnueabihf- \
+    make CC=$HOME/clang/bin/clang -j4 ARCH=arm64 SUBARCH=arm64 O=out \
+        CROSS_COMPILE=$GCC_64_DIR/aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=$GCC_32_DIR/arm-linux-androideabi- \
         INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
     END=$(date +"%s")
     DIFF=$((END - START))
