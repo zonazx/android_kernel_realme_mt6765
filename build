@@ -18,19 +18,6 @@ PATH="$HOME/CLANG/bin:PATH"
 GCC_64_DIR="$HOME/GCC64"
 GCC_32_DIR="$HOME/GCC32"
 
-# Prebuilt Clang Toolchain (AOSP)
-CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz"
-
-# Prebuilt GCC Utilities (AOSP)
-GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
-GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
-GCC_BRANCH="master-kernel-build-2021"
-
-# Cloning all the Necessary files
-if [ ! -d CLANG ]; then mkdir -p $HOME/CLANG && wget "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG; fi
-[ ! -d GCC64 ] && git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" $GCC64
-[ ! -d GCC32 ] && git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" $GCC32
-
 # Function to send messages to Telegram
 send_msg_telegram() {
     case "$1" in
