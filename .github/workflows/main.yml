@@ -21,6 +21,21 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get install dialog bash sed wget git curl zip tar jq expect make cmake automake autoconf llvm lld lldb clang gcc binutils bison perl gperf gawk flex bc python3 zstd openssl unzip cpio bc bison build-essential ccache liblz4-tool libsdl1.2-dev libstdc++6 libxml2 libxml2-utils lzop pngcrush schedtool squashfs-tools xsltproc zlib1g-dev libncurses5-dev bzip2 git gcc g++ libssl-dev gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-arm-linux-gnueabi dos2unix kmod python2 aria2 -y
 
+      - name: Toolchain
+        run: |
+          # Prebuilt Clang Toolchain (AOSP)
+          CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz"            
+          # Prebuilt GCC Utilities (AOSP)
+          GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
+          GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
+          GCC_BRANCH="master-kernel-build-2021"
+            
+          # Cloning all the Necessary files
+          mkdir -p $HOME/CLANG
+          wget "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG
+          git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" $HOME/GCC64
+          git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" $HOME/GCC32
+            
       - name: KernelSU + Clean
         run: |
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
