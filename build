@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e -x
-
 # Environment Variables
 export ARCH=arm64
 export TZ=Asia/Jakarta
