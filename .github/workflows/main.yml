@@ -23,8 +23,8 @@ jobs:
 
       - name: Toolchain
         run: |
-          mkdir -p $HOME/CLANG
           git clone --depth=1 -b karashi https://github.com/techyminati/AnyKernel3 anykernel
+          mkdir -p $HOME/CLANG
           wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG
           git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b master-kernel-build-2021 $HOME/GCC64
           git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b master-kernel-build-2021 $HOME/GCC32
