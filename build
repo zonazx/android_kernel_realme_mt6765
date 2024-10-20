@@ -62,9 +62,8 @@ compile_kernel() {
     make CC=clang ARCH=arm64 O=out -j$(nproc --all) \
         HEADER_ARCH=arm64 \
         SUBARCH=arm64 \
-        CROSS_COMPILE=$HOME/toolchain/aarch64/bin/aarch64-linux-androidkernel- \
-        CROSS_COMPILE_ARM32=$HOME/toolchain/arm/bin/arm-linux-androidkernel- \
-        CLANG_TRIPLE=aarch64-linux-gnu- \
+        CROSS_COMPILE=$HOME/toolchain/aarch64/bin/aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=$HOME/toolchain/arm/bin/arm-linux-gnueabi- \
     INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
     END=$(date +"%s")
     DIFF=$((END - START))
