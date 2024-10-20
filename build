@@ -10,9 +10,6 @@ export TIMESTAMP=$(date +"%m%d")-$(date +"%H%M")
 export ZIPI="LIFE-${TIMESTAMP}"
 export KBUILD_BUILD_USER="syc"
 export KBUILD_BUILD_HOST="more"
-
-# Toolchain
-PATH="$HOME/CLANG/bin:PATH"
 GCC_64_DIR="$HOME/GCC64"
 GCC_32_DIR="$HOME/GCC32"
 
@@ -62,9 +59,9 @@ send_msg_telegram() {
 compile_kernel() {
     make O=out ARCH=arm64 RMX2185_defconfig
     START=$(date +"%s")
-    make CC=$HOME/CLANG/bin/clang -j4 ARCH=arm64 SUBARCH=arm64 O=out \
-        CROSS_COMPILE=$GCC_64_DIR/aarch64-linux-androidkernel- \
-        CROSS_COMPILE_ARM32=$GCC_32_DIR/arm-linux-androidkernel- \
+    make -j4 ARCH=arm64 SUBARCH=arm64 O=out \
+        CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-gnueabihf- \
         INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
     END=$(date +"%s")
     DIFF=$((END - START))
