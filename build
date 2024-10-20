@@ -8,7 +8,6 @@ export CHAT_ID="-1002122810217"
 export TOKEN="7087092882:AAGaHhJgtgDc-RUrgYPJTvaMpaMbyCyvf94"
 export TIMESTAMP=$(date +"%m%d")-$(date +"%H%M")
 export ZIPI="End-${TIMESTAMP}"
-export LOCALVERSION="-Mind"
 export KBUILD_BUILD_USER="syc"
 export KBUILD_BUILD_HOST="more"
 
@@ -60,7 +59,7 @@ compile_kernel() {
     PATH="$HOME/toolchain/clang/bin:$PATH"
     make ARCH=arm64 O=out RMX2185_defconfig  
     START=$(date +"%s")
-    make CC=$HOME/toolchain/clang/bin/clang ARCH=arm64 O=out -j$(nproc --all) \
+    make CC=clang ARCH=arm64 O=out -j$(nproc --all) \
         HEADER_ARCH=arm64 \
         SUBARCH=arm64 \
         CROSS_COMPILE=$HOME/toolchain/aarch64/bin/aarch64-linux-androidkernel- \
