@@ -23,18 +23,10 @@ jobs:
 
       - name: Toolchain
         run: |
-          # Prebuilt Clang Toolchain (AOSP)
-          CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz"            
-          # Prebuilt GCC Utilities (AOSP)
-          GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
-          GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
-          GCC_BRANCH="master-kernel-build-2021"
-            
-          # Cloning all the Necessary files
           mkdir -p $HOME/CLANG
-          wget "$CLANG_URL" -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG
-          git clone --depth=1 "${GCC64}" -b "${GCC_BRANCH}" $HOME/GCC64
-          git clone --depth=1 "${GCC32}" -b "${GCC_BRANCH}" $HOME/GCC32
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG
+          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b master-kernel-build-2021 $HOME/GCC64
+          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b master-kernel-build-2021 $HOME/GCC32
             
       - name: KernelSU + Clean
         run: |
