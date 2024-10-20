@@ -25,10 +25,10 @@ jobs:
       - name: Clone Crosstool
         run: |
           git clone --depth=1 -b karashi https://github.com/techyminati/AnyKernel3 anykernel
-          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b master-kernel-build-2021 $HOME/GCC64
+          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b master-kernel-build-2021 $HOME/toolchain/aarch64
           git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b master-kernel-build-2021 $HOME/GCC32
-          mkdir -p $HOME/CLANG
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz -O clang.tgz && tar -xzf clang.tgz -C $HOME/CLANG
+          mkdir -p $HOME/toolchain/arm
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android10-release/clang-r353983c.tar.gz -O clang.tgz && tar -xzf clang.tgz -C $HOME/toolchain/clang
      
       - name: KernelSU + Clean
         run: |
