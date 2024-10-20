@@ -1,21 +1,12 @@
 #!/bin/bash
 
-# Environment Variables
 export ARCH=arm64
 export TZ=Asia/Jakarta
 export SEND_TO_TG=1
 export CHAT_ID="-1002122810217"
 export TOKEN="7087092882:AAGaHhJgtgDc-RUrgYPJTvaMpaMbyCyvf94"
-export TIMESTAMP=$(date +"%m%d")-$(date +"%H%M")
-export ZIPI="LIFE-${TIMESTAMP}"
-export KBUILD_BUILD_USER="syc"
-export KBUILD_BUILD_HOST="more"
+export ZIPI="LIFE-$(date +"%m%d")-$(date +"%H%M")"
 
-PATH="$HOME/CLANG/bin:PATH"
-GCC_64_DIR="$HOME/GCC64"
-GCC_32_DIR="$HOME/GCC32"
-
-# Function to send messages to Telegram
 send_msg_telegram() {
     case "$1" in
         1) 
@@ -57,22 +48,30 @@ send_msg_telegram() {
     esac
 }
 
-# Function to compile the kernel
 compile_kernel() {
+
+    export TC_CLANG="$HOME/CLANG"
+    export GCC_64DIR="$HOME/GCC64"
+    export GCC_32DIR="$HOME/GCC32"
+
+    export PATH="$TC_CLANG/bin:PATH"
+
+    export KBUILD_BUILD_USER="syc"
+    export KBUILD_BUILD_HOST="more"
+
     make O=out ARCH=arm64 RMX2185_defconfig
     START=$(date +"%s")
-    make CC=clang -j4 ARCH=arm64 SUBARCH=arm64 O=out \
-        CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-androidkernel- \
-        CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androidkernel- \
-        INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
+    make CC=clang -j4 ARCH=arm64 SUBARCH=arm64 O=out CROSS_COMPILE=$GCC_64DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32DIR/bin/arm-linux-androideabi- INSTALL_MOD_STRIP=1 V=0 2>&1 | tee out/build.log
+
     END=$(date +"%s")
     DIFF=$((END - START))
     export minutes=$((DIFF / 60))
     export seconds=$((DIFF % 60))
+
 }
 
-# Function to zip the kernel
 zip_kernel() {
+
     if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ]; then
         cp ./out/arch/${ARCH}/boot/Image.gz ./anykernel
     else
@@ -96,11 +95,11 @@ zip_kernel() {
     fi
     
     mv ./anykernel/"${ZIPI}.zip" ./out/target
+
 }
 
-# Main function to build the kernel
 build_kernel() {
-    clear
+    
     if [ "$SEND_TO_TG" -eq 1 ]; then
         send_msg_telegram 1
     fi
@@ -118,7 +117,7 @@ build_kernel() {
     
     if [ "$SEND_TO_TG" -eq 1 ]; then        send_msg_telegram 3
     fi
+
 }
 
-# Start the build process
 build_kernel
