@@ -63,14 +63,6 @@ compile_kernel() {
     make CC=$HOME/toolchain/clang/bin/clang ARCH=arm64 O=out -j$(nproc --all) \
         HEADER_ARCH=arm64 \
         SUBARCH=arm64 \
-        LD=$HOME/toolchain/clang/bin/ld.lld \
-        AR=$HOME/toolchain/clang/bin/llvm-ar \
-        NM=$HOME/toolchain/clang/bin/llvm-nm \
-        OBJCOPY=$HOME/toolchain/clang/bin/llvm-objcopy \
-        OBJDUMP=$HOME/toolchain/clang/bin/llvm-objdump \
-        STRIP=$HOME/toolchain/clang/bin/llvm-strip \
-        LLVM=1 \
-        LLVM_IAS=1 \
         CROSS_COMPILE=$HOME/toolchain/aarch64/bin/aarch64-linux-android- \
         CROSS_COMPILE_ARM32=$HOME/toolchain/arm/bin/arm-linux-androideabi- \
         CLANG_TRIPLE=aarch64-linux-gnu- \
