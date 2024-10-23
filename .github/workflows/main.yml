@@ -37,9 +37,9 @@ jobs:
 
       - name: Clean
         run: |
-          find . -type f -exec chmod 777 {} +
           make clean; make mrproper
 
       - name: Build
         run: |
+          chmod 777 ./build
           ./build
